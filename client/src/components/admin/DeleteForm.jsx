@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 const DeleteForm = () => {
   const [type, setType] = useState('movie'); // or 'webseries'
@@ -15,7 +16,7 @@ const DeleteForm = () => {
     }
 
     try {
-      const response = await axios.delete(`${VITE_BASE_URL}/${type}/${id}`);
+      const response = await axios.delete(`${baseUrl}/${type}/${id}`);
       toast.success(`${type.toUpperCase()} deleted successfully`);
       setId('');
     } catch (err) {

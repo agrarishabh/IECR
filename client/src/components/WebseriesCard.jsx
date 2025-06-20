@@ -4,6 +4,7 @@ import { Bookmark, BookmarkCheck } from 'lucide-react';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 const WebseriesCard = ({ webseries, isInWatchlist }) => {
   const navigate = useNavigate();
@@ -18,13 +19,13 @@ const WebseriesCard = ({ webseries, isInWatchlist }) => {
       const token = await getToken();
 
       if (inWatchlist) {
-        await axios.delete(`${VITE_BASE_URL}/api/watchlist/remove`, {
+        await axios.delete(`${baseUrl}/api/watchlist/remove`, {
           data: { userId: user.id, webseriesId: webseries.id },
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success("Removed from watchlist");
       } else {
-        await axios.post(`${VITE_BASE_URL}/api/watchlist/add`, {
+        await axios.post(`${baseUrl}/api/watchlist/add`, {
           userId: user.id,
           webseries
         }, {

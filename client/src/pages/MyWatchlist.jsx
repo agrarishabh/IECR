@@ -5,6 +5,7 @@ import WebseriesCard from '../components/WebseriesCard';
 import BlurCircle from '../components/BlurCircle';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { toast } from 'react-hot-toast';
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 const MyWatchlist = () => {
   const [movieWatchlist, setMovieWatchlist] = useState([]);
@@ -18,7 +19,7 @@ const MyWatchlist = () => {
 
       try {
         const token = await getToken();
-        const { data } = await axios.get(`http://localhost:3000/api/watchlist/${user.id}`, {
+        const { data } = await axios.get(`${baseUrl}/api/watchlist/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

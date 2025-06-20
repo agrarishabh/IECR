@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MovieCard from "../components/MovieCard";
 import BlurCircle from "../components/BlurCircle";
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
@@ -11,7 +12,7 @@ const Movies = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/addmovies")
+      .get(`${baseUrl}/addmovies`)
       .then((res) => {
         setMovies(res.data);
         setLoading(false);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import BlurCircle from "../components/BlurCircle";
 import WebseriesCard from "../components/WebseriesCard";
-
+const baseUrl = import.meta.env.VITE_BASE_URL
 const Webseries = () => {
   const [webseriesList, setWebseriesList] = useState([]);
   const [sortKey, setSortKey] = useState("");
@@ -11,7 +11,7 @@ const Webseries = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/addwebseries")
+      .get(`${baseUrl}/addwebseries`)
       .then((res) => {
         setWebseriesList(res.data);
         setLoading(false); // 👈 Set loading to false after data fetch

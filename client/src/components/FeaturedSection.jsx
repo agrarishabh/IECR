@@ -5,6 +5,7 @@ import BlurCircle from './BlurCircle';
 import MovieCard from './MovieCard';
 import WebseriesCard from './WebseriesCard';
 import axios from 'axios';
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 const FeaturedSection = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const FeaturedSection = () => {
 
   useEffect(() => {
     // Fetch and sort movies by votes
-    axios.get(`${VITE_BASE_URL}/addmovies`)
+    axios.get(`${baseUrl}/addmovies`)
       .then((res) => {
         const sortedMovies = res.data
           .filter(movie => movie.votes)
@@ -28,7 +29,7 @@ const FeaturedSection = () => {
       .catch((err) => console.error('Failed to fetch movies:', err));
 
     // Fetch and sort webseries by votes
-    axios.get(`${VITE_BASE_URL}/addwebseries`)
+    axios.get(`${baseUrl}/addwebseries`)
       .then((res) => {
         const sortedWebseries = res.data
           .filter(series => series.votes)

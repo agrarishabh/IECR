@@ -10,6 +10,7 @@ const MovieCard = ({ movie, isInWatchlist }) => {
   const { user } = useUser();
   const { getToken } = useAuth();
   const [inWatchlist, setInWatchlist] = useState(isInWatchlist || false);
+  const baseUrl = import.meta.env.VITE_BASE_URL
 
   const handleWatchlist = async () => {
     try {
@@ -18,13 +19,13 @@ const MovieCard = ({ movie, isInWatchlist }) => {
       const token = await getToken();
 
       if (inWatchlist) {
-        await axios.delete(`${VITE_BASE_URL}/api/watchlist/remove`, {
+        await axios.delete(`${baseUrl}/api/watchlist/remove`, {
           data: { userId: user.id, movieId: movie.id },
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success("Removed from watchlist");
       } else {
-        await axios.post(`${VITE_BASE_URL}/api/watchlist/add`, {
+        await axios.post(`${baseUrl}/api/watchlist/add`, {
           userId: user.id,
           movie
         }, {

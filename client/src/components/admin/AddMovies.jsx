@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 const AddMovies = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const AddMovies = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${VITE_BASE_URL}/addmovies`, formData);
+      await axios.post(`${baseUrl}/addmovies`, formData);
       toast.success("Movie Added Successfully!");
       setFormData({
         _id: "", id: "", title: "", backdrop_path: "",

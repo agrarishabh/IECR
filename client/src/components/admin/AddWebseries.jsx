@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
+const baseUrl = import.meta.env.VITE_BASE_URL
 const AddWebseries = () => {
   const [formData, setFormData] = useState({
     _id: "",
@@ -21,7 +22,7 @@ const AddWebseries = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${VITE_BASE_URL}/addwebseries`, formData);
+      await axios.post(`${baseUrl}/addwebseries`, formData);
       toast.success("Webseries Added Successfully!");
       setFormData({
         _id: "",
