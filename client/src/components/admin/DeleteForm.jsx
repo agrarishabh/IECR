@@ -15,7 +15,7 @@ const DeleteForm = () => {
     }
 
     try {
-      const response = await axios.delete(`http://localhost:3000/${type}/${id}`);
+      const response = await axios.delete(`${VITE_BASE_URL}/${type}/${id}`);
       toast.success(`${type.toUpperCase()} deleted successfully`);
       setId('');
     } catch (err) {

@@ -21,7 +21,7 @@ const AddWebseries = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/addwebseries", formData);
+      await axios.post(`${VITE_BASE_URL}/addwebseries`, formData);
       toast.success("Webseries Added Successfully!");
       setFormData({
         _id: "",

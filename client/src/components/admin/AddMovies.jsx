@@ -21,7 +21,7 @@ const AddMovies = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/addmovies", formData);
+      await axios.post(`${VITE_BASE_URL}/addmovies`, formData);
       toast.success("Movie Added Successfully!");
       setFormData({
         _id: "", id: "", title: "", backdrop_path: "",

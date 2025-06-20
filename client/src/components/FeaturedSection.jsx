@@ -13,7 +13,7 @@ const FeaturedSection = () => {
 
   useEffect(() => {
     // Fetch and sort movies by votes
-    axios.get('http://localhost:3000/addmovies')
+    axios.get(`${VITE_BASE_URL}/addmovies`)
       .then((res) => {
         const sortedMovies = res.data
           .filter(movie => movie.votes)
@@ -28,7 +28,7 @@ const FeaturedSection = () => {
       .catch((err) => console.error('Failed to fetch movies:', err));
 
     // Fetch and sort webseries by votes
-    axios.get('http://localhost:3000/addwebseries')
+    axios.get(`${VITE_BASE_URL}/addwebseries`)
       .then((res) => {
         const sortedWebseries = res.data
           .filter(series => series.votes)
