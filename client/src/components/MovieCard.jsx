@@ -1,36 +1,73 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bookmark, BookmarkCheck, CheckCircle, CheckCircle2 } from 'lucide-react';
+import { Bookmark, BookmarkCheck } from 'lucide-react';
+import { useAuth, useUser } from '@clerk/clerk-react';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
-const MovieCard = ({ movie }) => {
-    const navigate = useNavigate();
-    const [watchlist, setWatchlist] = useState(false);
-    const [watched, setWatched] = useState(false);
+const MovieCard = ({ movie, isInWatchlist }) => {
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  const [inWatchlist, setInWatchlist] = useState(isInWatchlist || false);
 
-    const handleWatchlist = () => setWatchlist(!watchlist);
-    const handleWatched = () => setWatched(!watched);
+  const handleWatchlist = async () => {
+    try {
+      if (!user) return toast.error("Please log in");
 
-    return (
-        <div className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:translate-y-1 transition duration-300 w-66'>
-            <img src={movie.backdrop_path} alt="" className='rounded-lg h-90 w-full object-cover object-right-bottom cursor-pointer'/>
-            <p className='font-semibold mt-2 truncate'>{movie.title}</p>
-            <p className='text-sm text-gray-400 mt-2'>
-                {movie.release_year} • {movie.runtime} • {movie.rating} • {movie.votes}    
-            </p>
-            <div className="flex justify-between mt-3">
-              
-                <button onClick={handleWatchlist} className="flex items-center gap-2 text-sm">
-                    {watchlist ? <BookmarkCheck className="w-5 h-5 text-yellow-400"/> : <Bookmark className="w-5 h-5 text-white"/>}
-                    {watchlist ? "Added to Watchlist" : "Add to Watchlist"}
-                </button>
+      const token = await getToken();
 
-                <button onClick={handleWatched} className="flex items-center gap-2 text-sm">
-                    {watched ? <CheckCircle2 className="w-5 h-5 text-green-400"/> : <CheckCircle className="w-5 h-5 text-white"/>}
-                    {watched ? "Watched" : "Mark as Watched"}
-                </button>
-            </div>
-        </div>
-    );
+      if (inWatchlist) {
+        await axios.delete('http://localhost:3000/api/watchlist/remove', {
+          data: { userId: user.id, movieId: movie.id },
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success("Removed from watchlist");
+      } else {
+        await axios.post('http://localhost:3000/api/watchlist/add', {
+          userId: user.id,
+          movie
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success("Added to watchlist");
+      }
+
+      setInWatchlist(!inWatchlist);
+    } catch (err) {
+      console.error("Watchlist error:", err);
+      toast.error("Already in watchlist");
+    }
+  };
+
+  return (
+    <div className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:translate-y-1 transition duration-300 w-66'>
+      <img
+        src={movie.backdrop_path}
+        alt={movie.title}
+        className='rounded-lg h-90 w-full object-cover object-right-bottom cursor-pointer'
+      />
+      <p className='font-semibold mt-2 truncate'>{movie.title}</p>
+      <p className='text-sm text-gray-400 mt-2'>
+        {movie.release_year} • {movie.runtime} • {movie.rating} • {movie.votes}
+      </p>
+      <div className="flex justify-between mt-3">
+        <button onClick={handleWatchlist} className="flex items-center gap-2 text-sm">
+          {inWatchlist ? (
+            <>
+              <BookmarkCheck className="w-5 h-5 text-cyan-400" />
+              <span>Added to Watchlist</span>
+            </>
+          ) : (
+            <>
+              <Bookmark className="w-5 h-5 text-white" />
+              <span>Add to Watchlist</span>
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default MovieCard;

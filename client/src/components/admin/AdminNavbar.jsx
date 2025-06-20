@@ -17,7 +17,7 @@ const AdminNavbar = () => {
     </div>
     <div>
         <img className='h-20 md:h-30 w-20 md:w-30 rounded-full mx-auto mt-10' src={user.imageUrl} alt=""/>
-        <p className=' lg:text-xl text-center mt-2 text-base '>{user.firstName} {user.lastName}</p>
+        <p className=' lg:text-xl text-center mt-2 text-base '>{user.firstName} {user.lastName} (Admin)</p>
     </div>
     </div>
   )

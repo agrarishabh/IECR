@@ -1,7 +1,7 @@
 import React, { use, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
-import { CheckCircleIcon, Eye, MenuIcon, SearchIcon, StarIcon, XIcon } from 'lucide-react'
+import { Eye, MenuIcon, SearchIcon, XIcon } from 'lucide-react'
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react'
 
 const Navbar = () => {
@@ -25,7 +25,6 @@ const Navbar = () => {
             <Link onClick={() => {scrollTo(0,0),setIsOpen(false)}} to='/webseries'>Indian Webseries</Link>
         </div>
         <div className='flex items-center gap-8'>
-            <SearchIcon className='max-md:hidden w-6 h-6 cursor-pointer'/>
             {
               !user ? (
                 <button onClick={openSignIn} className='px-4 py-1 sm:px-7 sm:py-2 bg-[#37C6CB] hover:bg-[#1FA9AF] transition rounded-full
@@ -34,7 +33,6 @@ const Navbar = () => {
                 <UserButton>
                   <UserButton.MenuItems>
                     <UserButton.Action label = "My Watchlist" labelIcon={<Eye width={15}/>} onClick={()=>navigate('/my-watchlist')}/>
-                    <UserButton.Action label = "Watched" labelIcon={<CheckCircleIcon width={15}/>} onClick={()=>navigate('/watched')}/>
                   </UserButton.MenuItems>  
                 </UserButton>
                 
