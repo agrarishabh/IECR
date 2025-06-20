@@ -9,16 +9,25 @@ import Movie from './models/Movie.js';
 import Webseries from './models/Webseries.js';
 import { requireAuth } from "@clerk/express";
 import watchlistRoutes from './routes/watchlist.js';
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://iecr.vercel.app'
+];
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 await connectDB()
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 }));
-
 app.use(express.json());
 app.use(clerkMiddleware())
 
