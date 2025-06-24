@@ -2,19 +2,21 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MovieCard from "../components/MovieCard";
 import BlurCircle from "../components/BlurCircle";
-const baseUrl = import.meta.env.VITE_BASE_URL
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
-  const [sortKey, setSortKey] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortKey, setSortKey] = useState("release_year");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`${baseUrl}/addmovies`)
       .then((res) => {
-        setMovies(res.data);
+        const sorted = [...res.data].sort((a, b) => b.release_year - a.release_year);
+        setMovies(sorted);
         setLoading(false);
       })
       .catch((err) => {
@@ -57,6 +59,7 @@ const Movies = () => {
         <h1 className="text-lg font-medium">Showing All Movies</h1>
         <select
           onChange={handleSortChange}
+          value={`${sortKey}:${sortOrder}`}
           className="bg-gray-800 text-white px-3 py-2 rounded-md"
         >
           <option value="">Sort by</option>

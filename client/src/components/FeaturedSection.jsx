@@ -5,12 +5,15 @@ import BlurCircle from './BlurCircle';
 import MovieCard from './MovieCard';
 import WebseriesCard from './WebseriesCard';
 import axios from 'axios';
-const baseUrl = import.meta.env.VITE_BASE_URL
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const FeaturedSection = () => {
   const navigate = useNavigate();
   const [topMovies, setTopMovies] = useState([]);
   const [topWebseries, setTopWebseries] = useState([]);
+  const [loadingMovies, setLoadingMovies] = useState(true);
+  const [loadingWebseries, setLoadingWebseries] = useState(true);
 
   useEffect(() => {
     // Fetch and sort movies by votes
@@ -26,7 +29,8 @@ const FeaturedSection = () => {
           .slice(0, 4);
         setTopMovies(sortedMovies);
       })
-      .catch((err) => console.error('Failed to fetch movies:', err));
+      .catch((err) => console.error('Failed to fetch movies:', err))
+      .finally(() => setLoadingMovies(false));
 
     // Fetch and sort webseries by votes
     axios.get(`${baseUrl}/addwebseries`)
@@ -41,7 +45,8 @@ const FeaturedSection = () => {
           .slice(0, 4);
         setTopWebseries(sortedWebseries);
       })
-      .catch((err) => console.error('Failed to fetch webseries:', err));
+      .catch((err) => console.error('Failed to fetch webseries:', err))
+      .finally(() => setLoadingWebseries(false));
   }, []);
 
   return (
@@ -62,7 +67,11 @@ const FeaturedSection = () => {
         </button>
       </div>
       <div className='flex flex-wrap max-sm:justify-center gap-8 mt-8'>
-        {topMovies.length > 0 ? (
+        {loadingMovies ? (
+          <div className="flex justify-center items-center w-full h-40">
+            <div className="w-10 h-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : topMovies.length > 0 ? (
           topMovies.map((movie) => (
             <MovieCard key={movie._id || movie.id} movie={movie} />
           ))
@@ -87,7 +96,11 @@ const FeaturedSection = () => {
         </button>
       </div>
       <div className='flex flex-wrap max-sm:justify-center gap-8 mt-8'>
-        {topWebseries.length > 0 ? (
+        {loadingWebseries ? (
+          <div className="flex justify-center items-center w-full h-40">
+            <div className="w-10 h-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : topWebseries.length > 0 ? (
           topWebseries.map((series) => (
             <WebseriesCard key={series._id || series.id} webseries={series} />
           ))

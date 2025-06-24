@@ -11,39 +11,46 @@ router.post('/add', async (req, res) => {
 
   try {
     if (movie) {
-      let existingMovie = await Movie.findOne({ id: movie.id });
+      const movieId = String(movie.id);
+
+      let existingMovie = await Movie.findOne({ _id: movieId });
       if (!existingMovie) {
-        existingMovie = new Movie({ _id: movie.id.toString(), ...movie });
+        existingMovie = new Movie({ _id: movieId, ...movie });
         await existingMovie.save();
       }
 
-      const entry = new Watchlist({ userId, movieId: movie.id });
-      await entry.save();
+      const exists = await Watchlist.findOne({ userId, movieId });
+      if (exists) {
+        return res.status(409).json({ message: "Movie already in watchlist." });
+      }
 
+      await new Watchlist({ userId, movieId }).save();
       return res.status(200).json({ message: "Movie added to watchlist." });
     }
 
     if (webseries) {
-      let existingWebseries = await Webseries.findOne({ id: webseries.id });
+      const webseriesId = String(webseries.id);
+
+      let existingWebseries = await Webseries.findOne({ _id: webseriesId });
       if (!existingWebseries) {
-        existingWebseries = new Webseries({ _id: webseries.id.toString(), ...webseries });
+        existingWebseries = new Webseries({ _id: webseriesId, ...webseries });
         await existingWebseries.save();
       }
 
-      const entry = new Watchlist({ userId, webseriesId: webseries.id });
-      await entry.save();
+      const exists = await Watchlist.findOne({ userId, webseriesId });
+      if (exists) {
+        return res.status(409).json({ message: "Webseries already in watchlist." });
+      }
 
+      await new Watchlist({ userId, webseriesId }).save();
       return res.status(200).json({ message: "Webseries added to watchlist." });
     }
 
     res.status(400).json({ message: "Invalid request. Provide either movie or webseries data." });
 
   } catch (err) {
-    if (err.code === 11000) {
-      res.status(409).json({ message: "Already in watchlist." });
-    } else {
-      res.status(500).json({ error: err.message });
-    }
+    console.error("Watchlist add error:", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -54,7 +61,6 @@ router.get('/:userId', async (req, res) => {
       .populate('movieId')
       .populate('webseriesId');
 
-    // Separate movie and webseries entries
     const movies = list
       .filter(entry => entry.movieId)
       .map(entry => entry.movieId);

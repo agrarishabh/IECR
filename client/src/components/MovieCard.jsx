@@ -46,7 +46,7 @@ const MovieCard = ({ movie, isInWatchlist }) => {
       <img
         src={movie.backdrop_path}
         alt={movie.title}
-        className='rounded-lg h-90 w-full object-cover object-right-bottom cursor-pointer'
+        className='rounded-lg h-90 w-full object-cover object-center cursor-pointer'
       />
       <p className='font-semibold mt-2 truncate'>{movie.title}</p>
       <p className='text-sm text-gray-400 mt-2'>

@@ -2,19 +2,22 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import BlurCircle from "../components/BlurCircle";
 import WebseriesCard from "../components/WebseriesCard";
-const baseUrl = import.meta.env.VITE_BASE_URL
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 const Webseries = () => {
   const [webseriesList, setWebseriesList] = useState([]);
-  const [sortKey, setSortKey] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [loading, setLoading] = useState(true); // 👈 Add loading state
+  const [sortKey, setSortKey] = useState("release_year");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`${baseUrl}/addwebseries`)
       .then((res) => {
-        setWebseriesList(res.data);
-        setLoading(false); // 👈 Set loading to false after data fetch
+        const sorted = [...res.data].sort((a, b) => b.release_year - a.release_year);
+        setWebseriesList(sorted);
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching webseries:", err);
@@ -56,6 +59,7 @@ const Webseries = () => {
         <h1 className="text-lg font-medium">Showing All Webseries</h1>
         <select
           onChange={handleSortChange}
+          value={`${sortKey}:${sortOrder}`}
           className="bg-gray-800 text-white px-3 py-2 rounded-md"
         >
           <option value="">Sort by</option>

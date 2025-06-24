@@ -20,7 +20,7 @@ const WebseriesCard = ({ webseries, isInWatchlist }) => {
 
       if (inWatchlist) {
         await axios.delete(`${baseUrl}/api/watchlist/remove`, {
-          data: { userId: user.id, webseriesId: webseries.id },
+          data: { userId: user.id, webseriesId: String(webseries.id) },
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success("Removed from watchlist");
@@ -46,7 +46,7 @@ const WebseriesCard = ({ webseries, isInWatchlist }) => {
       <img
         src={webseries.backdrop_path}
         alt={webseries.title}
-        className='rounded-lg h-90 w-full object-cover object-right-bottom cursor-pointer'
+        className='rounded-lg h-90 w-full object-cover object-center cursor-pointer'
       />
       <p className='font-semibold mt-2 truncate'>{webseries.title}</p>
       <p className='text-sm text-gray-400 mt-2'>
