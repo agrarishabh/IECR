@@ -56,7 +56,7 @@ const MovieCard = ({ movie, isInWatchlist, style }) => {
       />
       <p className='font-semibold mt-2 truncate'>{movie.title}</p>
       <p className='text-sm text-gray-400 mt-2'>
-        <span className="text-cyan-400 font-medium">ID: {movie.id}</span> • {movie.release_year} • {movie.runtime} • {movie.rating} • {movie.votes}
+        ID: {movie.id} • {movie.release_year} • {movie.runtime} • {movie.rating} • {movie.votes}
       </p>
       <div className="flex justify-between mt-3">
         <button onClick={handleWatchlist} className="flex items-center gap-2 text-sm cursor-pointer">

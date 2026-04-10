@@ -7,6 +7,7 @@ import { serve } from "inngest/express";
 import { inngest, functions } from "./inngest/index.js";
 import Movie from './models/Movie.js';
 import Webseries from './models/Webseries.js';
+import Watchlist from './models/Watchlist.js';
 import { requireAuth } from "@clerk/express";
 import watchlistRoutes from './routes/watchlist.js';
 const allowedOrigins = [
@@ -17,6 +18,10 @@ const allowedOrigins = [
 const app = express();
 const port = process.env.PORT || 3000;
 await connectDB()
+
+// Sync indexes to drop old stale indexes and recreate with correct filters
+await Watchlist.syncIndexes();
+console.log("Watchlist indexes synced successfully");
 // Middleware
 app.use(cors({
   origin: function (origin, callback) {

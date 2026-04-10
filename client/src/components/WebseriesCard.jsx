@@ -56,7 +56,7 @@ const WebseriesCard = ({ webseries, isInWatchlist, style }) => {
       />
       <p className='font-semibold mt-2 truncate'>{webseries.title}</p>
       <p className='text-sm text-gray-400 mt-2'>
-        <span className="text-cyan-400 font-medium">ID: {webseries.id}</span> • {webseries.release_year} • {webseries.seasons} seasons • {webseries.rating} • {webseries.votes}
+        ID: {webseries.id} • {webseries.release_year} • {webseries.seasons} seasons • {webseries.rating} • {webseries.votes}
       </p>
       <div className="flex justify-between mt-3">
         <button onClick={handleWatchlist} className="flex items-center gap-2 text-sm cursor-pointer">

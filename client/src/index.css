@@ -37,11 +37,44 @@ body{
   animation: subtlePulse 0.35s ease-in-out;
 }
 
-/* Card hover glow */
+/* Card hover — original downward movement + subtle glow */
 .card-hover-glow {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .card-hover-glow:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 30px rgba(55, 198, 203, 0.15);
+  transform: translateY(4px);
+  box-shadow: 0 4px 20px rgba(55, 198, 203, 0.12);
+}
+
+/* Navbar logo glow on hover */
+.logo-glow {
+  transition: filter 0.4s ease, transform 0.3s ease;
+}
+.logo-glow:hover {
+  filter: drop-shadow(0 0 8px rgba(55, 198, 203, 0.7)) drop-shadow(0 0 20px rgba(55, 198, 203, 0.4));
+  transform: scale(1.05);
+}
+
+/* Navbar link hover animation */
+.nav-link-hover {
+  position: relative;
+  transition: color 0.3s ease;
+}
+.nav-link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #37C6CB;
+  transition: width 0.3s ease, left 0.3s ease;
+  border-radius: 1px;
+}
+.nav-link-hover:hover {
+  color: #37C6CB;
+}
+.nav-link-hover:hover::after {
+  width: 100%;
+  left: 0;
 }
