@@ -45,9 +45,9 @@ const WebseriesCard = ({ webseries, isInWatchlist, style }) => {
   };
 
   return (
+    <div className='animate-fade-in-up' style={style}>
     <div
-      className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl w-66 card-hover-glow animate-fade-in-up'
-      style={style}
+      className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl w-66 card-hover-glow'
     >
       <img
         src={webseries.backdrop_path}
@@ -73,6 +73,7 @@ const WebseriesCard = ({ webseries, isInWatchlist, style }) => {
           )}
         </button>
       </div>
+    </div>
     </div>
   );
 };
