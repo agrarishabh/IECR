@@ -4,6 +4,8 @@ import AddMovies from '../../components/admin/AddMovies';
 import AddWebseries from '../../components/admin/AddWebseries';
 import BlurCircle from '../../components/BlurCircle';
 import DeleteForm from '../../components/admin/DeleteForm';
+import UpdateMovie from '../../components/admin/UpdateMovie';
+import UpdateWebseries from '../../components/admin/UpdateWebseries';
 
 const AdminPage = () => {
   return (
@@ -11,7 +13,7 @@ const AdminPage = () => {
       <AdminNavbar />
       <BlurCircle top='0' right='-80px' />
       
-      {/* Row Container for Admin Forms */}
+      {/* Row 1: Add & Delete Forms */}
       <div className="flex flex-col lg:flex-row gap-8 justify-center items-start px-6 py-10">
         <div className="flex-1">
           <AddMovies />
@@ -21,6 +23,16 @@ const AdminPage = () => {
         </div>
         <div className="flex-1">
           <DeleteForm />
+        </div>
+      </div>
+
+      {/* Row 2: Update Forms */}
+      <div className="flex flex-col lg:flex-row gap-8 justify-center items-start px-6 pb-10">
+        <div className="flex-1">
+          <UpdateMovie />
+        </div>
+        <div className="flex-1">
+          <UpdateWebseries />
         </div>
       </div>
 

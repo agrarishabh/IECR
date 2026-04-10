@@ -59,11 +59,12 @@ const MyWatchlist = () => {
             {movieWatchlist.length === 0 ? (
               <p className='text-gray-400'>No movies in your watchlist yet.</p>
             ) : (
-              movieWatchlist.map(movie => (
+              movieWatchlist.map((movie, index) => (
                 <MovieCard
                   key={movie._id || movie.id}
                   movie={movie}
                   isInWatchlist={true}
+                  style={{ animationDelay: `${index * 0.07}s` }}
                 />
               ))
             )}
@@ -83,11 +84,12 @@ const MyWatchlist = () => {
             {webseriesWatchlist.length === 0 ? (
               <p className='text-gray-400'>No webseries in your watchlist yet.</p>
             ) : (
-              webseriesWatchlist.map(webseries => (
+              webseriesWatchlist.map((webseries, index) => (
                 <WebseriesCard
                   key={webseries._id || webseries.id}
                   webseries={webseries}
                   isInWatchlist={true}
+                  style={{ animationDelay: `${index * 0.07}s` }}
                 />
               ))
             )}

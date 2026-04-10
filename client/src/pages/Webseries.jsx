@@ -11,26 +11,8 @@ const Webseries = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    axios
-      .get(`${baseUrl}/addwebseries`)
-      .then((res) => {
-        const sorted = [...res.data].sort((a, b) => b.release_year - a.release_year);
-        setWebseriesList(sorted);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching webseries:", err);
-        setLoading(false);
-      });
-  }, []);
-
-  const handleSortChange = (e) => {
-    const [key, order] = e.target.value.split(":");
-    setSortKey(key);
-    setSortOrder(order);
-
-    const sorted = [...webseriesList].sort((a, b) => {
+  const sortList = (list, key, order) => {
+    return [...list].sort((a, b) => {
       let aVal = a[key];
       let bVal = b[key];
 
@@ -44,10 +26,34 @@ const Webseries = () => {
         bVal = parseInt((b.votes || "0").replace(/\D/g, ""));
       }
 
-      return order === "asc" ? aVal - bVal : bVal - aVal;
-    });
+      const primary = order === "asc" ? aVal - bVal : bVal - aVal;
+      if (primary !== 0) return primary;
 
-    setWebseriesList(sorted);
+      // Secondary sort: within same value, sort by id descending
+      return b.id - a.id;
+    });
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${baseUrl}/addwebseries`)
+      .then((res) => {
+        // Default: release_year desc, then id desc within same year
+        const sorted = sortList(res.data, "release_year", "desc");
+        setWebseriesList(sorted);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching webseries:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSortChange = (e) => {
+    const [key, order] = e.target.value.split(":");
+    setSortKey(key);
+    setSortOrder(order);
+    setWebseriesList(sortList(webseriesList, key, order));
   };
 
   return (
@@ -69,6 +75,8 @@ const Webseries = () => {
           <option value="rating:desc">Rating ↓</option>
           <option value="votes:asc">Votes ↑</option>
           <option value="votes:desc">Votes ↓</option>
+          <option value="id:asc">ID ↑</option>
+          <option value="id:desc">ID ↓</option>
         </select>
       </div>
 
@@ -78,8 +86,12 @@ const Webseries = () => {
         </div>
       ) : webseriesList.length > 0 ? (
         <div className="flex flex-wrap max-sm:justify-center gap-8">
-          {webseriesList.map((show) => (
-            <WebseriesCard webseries={show} key={show._id || show.id} />
+          {webseriesList.map((show, index) => (
+            <WebseriesCard
+              webseries={show}
+              key={show._id || show.id}
+              style={{ animationDelay: `${index * 0.07}s` }}
+            />
           ))}
         </div>
       ) : (

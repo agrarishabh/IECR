@@ -11,26 +11,8 @@ const Movies = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    axios
-      .get(`${baseUrl}/addmovies`)
-      .then((res) => {
-        const sorted = [...res.data].sort((a, b) => b.release_year - a.release_year);
-        setMovies(sorted);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
-
-  const handleSortChange = (e) => {
-    const [key, order] = e.target.value.split(":");
-    setSortKey(key);
-    setSortOrder(order);
-
-    const sorted = [...movies].sort((a, b) => {
+  const sortMovies = (list, key, order) => {
+    return [...list].sort((a, b) => {
       let aVal = a[key];
       let bVal = b[key];
 
@@ -44,10 +26,34 @@ const Movies = () => {
         bVal = parseInt((b.votes || "0").replace(/\D/g, ""));
       }
 
-      return order === "asc" ? aVal - bVal : bVal - aVal;
-    });
+      const primary = order === "asc" ? aVal - bVal : bVal - aVal;
+      if (primary !== 0) return primary;
 
-    setMovies(sorted);
+      // Secondary sort: within same value, sort by id descending
+      return b.id - a.id;
+    });
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${baseUrl}/addmovies`)
+      .then((res) => {
+        // Default: release_year desc, then id desc within same year
+        const sorted = sortMovies(res.data, "release_year", "desc");
+        setMovies(sorted);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSortChange = (e) => {
+    const [key, order] = e.target.value.split(":");
+    setSortKey(key);
+    setSortOrder(order);
+    setMovies(sortMovies(movies, key, order));
   };
 
   return (
@@ -69,6 +75,8 @@ const Movies = () => {
           <option value="rating:desc">Rating ↓</option>
           <option value="votes:asc">Votes ↑</option>
           <option value="votes:desc">Votes ↓</option>
+          <option value="id:asc">ID ↑</option>
+          <option value="id:desc">ID ↓</option>
         </select>
       </div>
 
@@ -78,8 +86,12 @@ const Movies = () => {
         </div>
       ) : movies.length > 0 ? (
         <div className="flex flex-wrap max-sm:justify-center gap-8">
-          {movies.map((movie) => (
-            <MovieCard key={movie._id || movie.id} movie={movie} />
+          {movies.map((movie, index) => (
+            <MovieCard
+              key={movie._id || movie.id}
+              movie={movie}
+              style={{ animationDelay: `${index * 0.07}s` }}
+            />
           ))}
         </div>
       ) : (

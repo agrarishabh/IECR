@@ -71,6 +71,38 @@ app.get('/addwebseries', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// For updating movie
+app.put('/movie/:id', async (req, res) => {
+  try {
+    const { backdrop_path, rating, votes } = req.body;
+    const updated = await Movie.findByIdAndUpdate(
+      req.params.id,
+      { backdrop_path, rating, votes },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ error: "Movie not found" });
+    res.status(200).json({ message: "Movie updated successfully", movie: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// For updating webseries
+app.put('/webseries/:id', async (req, res) => {
+  try {
+    const { backdrop_path, seasons, rating, votes } = req.body;
+    const updated = await Webseries.findByIdAndUpdate(
+      req.params.id,
+      { backdrop_path, seasons, rating, votes },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ error: "Webseries not found" });
+    res.status(200).json({ message: "Webseries updated successfully", webseries: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // For deleting movie
 app.delete('/movie/:id', async (req, res) => {
   try {

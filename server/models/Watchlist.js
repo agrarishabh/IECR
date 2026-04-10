@@ -21,7 +21,7 @@ watchlistSchema.index(
   { userId: 1, movieId: 1 },
   {
     unique: true,
-    partialFilterExpression: { movieId: { $exists: true } },
+    partialFilterExpression: { movieId: { $type: "string" } },
   }
 );
 
@@ -30,7 +30,7 @@ watchlistSchema.index(
   { userId: 1, webseriesId: 1 },
   {
     unique: true,
-    partialFilterExpression: { webseriesId: { $exists: true } },
+    partialFilterExpression: { webseriesId: { $type: "string" } },
   }
 );
 

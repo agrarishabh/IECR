@@ -6,11 +6,12 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 const baseUrl = import.meta.env.VITE_BASE_URL
 
-const WebseriesCard = ({ webseries, isInWatchlist }) => {
+const WebseriesCard = ({ webseries, isInWatchlist, style }) => {
   const navigate = useNavigate();
   const { user } = useUser();
   const { getToken } = useAuth();
   const [inWatchlist, setInWatchlist] = useState(isInWatchlist || false);
+  const [bookmarkPulse, setBookmarkPulse] = useState(false);
 
   const handleWatchlist = async () => {
     try {
@@ -34,6 +35,8 @@ const WebseriesCard = ({ webseries, isInWatchlist }) => {
         toast.success("Added to watchlist");
       }
 
+      setBookmarkPulse(true);
+      setTimeout(() => setBookmarkPulse(false), 350);
       setInWatchlist(!inWatchlist);
     } catch (err) {
       console.error("Watchlist error:", err);
@@ -42,7 +45,10 @@ const WebseriesCard = ({ webseries, isInWatchlist }) => {
   };
 
   return (
-    <div className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:translate-y-1 transition duration-300 w-66'>
+    <div
+      className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl w-66 card-hover-glow animate-fade-in-up'
+      style={style}
+    >
       <img
         src={webseries.backdrop_path}
         alt={webseries.title}
@@ -50,18 +56,18 @@ const WebseriesCard = ({ webseries, isInWatchlist }) => {
       />
       <p className='font-semibold mt-2 truncate'>{webseries.title}</p>
       <p className='text-sm text-gray-400 mt-2'>
-        {webseries.release_year} • {webseries.seasons} seasons • {webseries.rating} • {webseries.votes}
+        <span className="text-cyan-400 font-medium">ID: {webseries.id}</span> • {webseries.release_year} • {webseries.seasons} seasons • {webseries.rating} • {webseries.votes}
       </p>
       <div className="flex justify-between mt-3">
-        <button onClick={handleWatchlist} className="flex items-center gap-2 text-sm">
+        <button onClick={handleWatchlist} className="flex items-center gap-2 text-sm cursor-pointer">
           {inWatchlist ? (
             <>
-              <BookmarkCheck className="w-5 h-5 text-cyan-400" />
+              <BookmarkCheck className={`w-5 h-5 text-cyan-400 ${bookmarkPulse ? 'animate-bookmark-pulse' : ''}`} />
               <span>Added to Watchlist</span>
             </>
           ) : (
             <>
-              <Bookmark className="w-5 h-5 text-white" />
+              <Bookmark className={`w-5 h-5 text-white ${bookmarkPulse ? 'animate-bookmark-pulse' : ''}`} />
               <span>Add to Watchlist</span>
             </>
           )}
