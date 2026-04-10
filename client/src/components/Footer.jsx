@@ -13,7 +13,7 @@ const Footer = () => {
                 </div>
                 <div className="flex-1 flex items-start md:justify-end gap-20 md:gap-40">
                     <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-                        <h2 className="font-semibold mb-5">IECR</h2>
+                        <h2 className="font-semibold mb-5 heading-hover-cyan">IECR</h2>
                         <ul className="text-sm space-y-2">
                             <li><a href="#" className="footer-link-hover">Home</a></li>
                             <li><a href="#" className="footer-link-hover">About us</a></li>
@@ -22,7 +22,7 @@ const Footer = () => {
                         </ul>
                     </div>
                     <div className="animate-fade-in-up" style={{ animationDelay: '0.45s' }}>
-                        <h2 className="font-semibold mb-5">Get in touch</h2>
+                        <h2 className="font-semibold mb-5 heading-hover-cyan">Get in touch</h2>
                         <div className="text-sm space-y-2">
                             <p>+91 6389841527</p>
                             <p>agraharirishabh40204@gmail.com</p>

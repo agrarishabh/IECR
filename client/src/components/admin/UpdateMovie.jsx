@@ -50,7 +50,7 @@ const UpdateMovie = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-gray-800 rounded-xl shadow-md mt-20 text-white animate-fade-in-up">
-      <h2 className="text-2xl font-bold text-center mb-6">Update Movie</h2>
+      <h2 className="text-2xl font-bold text-center mb-6 heading-hover-cyan">Update Movie</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
           <label className="block mb-1">Movie ID (_id)</label>

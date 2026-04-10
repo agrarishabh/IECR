@@ -54,7 +54,7 @@ const FeaturedSection = () => {
       {/* Top Movies */}
       <div className='relative flex items-center justify-between pt-20 pb-10'>
         <BlurCircle top='0' right='-80px' />
-        <p className='text-gray-300 font-medium text-lg animate-slide-in-left'>Most Rated Indian Movies</p>
+        <p className='text-gray-300 font-medium text-lg animate-slide-in-left heading-hover-cyan'>Most Rated Indian Movies</p>
         <button
           onClick={() => {
             navigate('/movies');
@@ -83,7 +83,7 @@ const FeaturedSection = () => {
       {/* Top Webseries */}
       <div className='relative flex items-center justify-between pt-20 pb-10'>
         <BlurCircle top='0' left='-160px' />
-        <p className='text-gray-300 font-medium text-lg animate-slide-in-left' style={{ animationDelay: '0.2s' }}>Most Rated Indian Webseries</p>
+        <p className='text-gray-300 font-medium text-lg animate-slide-in-left heading-hover-cyan' style={{ animationDelay: '0.2s' }}>Most Rated Indian Webseries</p>
         <button
           onClick={() => {
             navigate('/webseries');

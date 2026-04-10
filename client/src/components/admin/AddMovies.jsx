@@ -36,7 +36,7 @@ const AddMovies = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-gray-800 rounded-xl shadow-md mt-20 text-white">
-      <h2 className="text-2xl font-bold text-center mb-6">Add New Movie</h2>
+      <h2 className="text-2xl font-bold text-center mb-6 heading-hover-cyan">Add New Movie</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {[
           { label: "_id", name: "_id", type: "text" },

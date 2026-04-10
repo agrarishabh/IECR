@@ -144,3 +144,13 @@ body{
   color: #37C6CB;
   transform: translateX(4px);
 }
+
+/* Heading cyan hover effect */
+.heading-hover-cyan {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  cursor: default;
+}
+.heading-hover-cyan:hover {
+  color: #37C6CB;
+  text-shadow: 0 0 12px rgba(55, 198, 203, 0.35);
+}

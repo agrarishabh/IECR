@@ -62,7 +62,7 @@ const Movies = () => {
       <BlurCircle bottom="50px" right="50px" />
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-lg font-medium animate-slide-in-left">Showing All Movies</h1>
+        <h1 className="text-lg font-medium animate-slide-in-left heading-hover-cyan">Showing All Movies</h1>
         <select
           onChange={handleSortChange}
           value={`${sortKey}:${sortOrder}`}

@@ -21,13 +21,13 @@ const AdminNavbar = () => {
         <div className="flex gap-4">
           <Link
             to="/movies"
-            className="px-3 py-1 rounded-md hover:bg-gray-700 transition text-sm md:text-base"
+            className="px-3 py-1 rounded-md hover:bg-gray-700 transition text-sm md:text-base nav-link-hover"
           >
             Movies
           </Link>
           <Link
             to="/webseries"
-            className="px-3 py-1 rounded-md hover:bg-gray-700 transition text-sm md:text-base"
+            className="px-3 py-1 rounded-md hover:bg-gray-700 transition text-sm md:text-base nav-link-hover"
           >
             Webseries
           </Link>
@@ -41,7 +41,7 @@ const AdminNavbar = () => {
           src={user.imageUrl}
           alt="Admin"
         />
-        <p className="text-center mt-2 text-base md:text-xl">
+        <p className="text-center mt-2 text-base md:text-xl heading-hover-cyan">
           {user.firstName} {user.lastName} <span className="text-sm text-gray-400">(Admin)</span>
         </p>
       </div>
