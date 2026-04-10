@@ -45,11 +45,11 @@ const MyWatchlist = () => {
     <div className='relative my-40 mb-60 px-6 md:px-16 lg:px-40 xl:px-44 overflow-hidden min-h-[80vh]'>
       <BlurCircle top="150px" left="0px" />
       <BlurCircle bottom="50px" right="50px" />
-      <h1 className='text-lg font-medium my-4'>My Watchlist</h1>
+      <h1 className='text-lg font-medium my-4 animate-slide-in-left'>My Watchlist</h1>
 
       {/* Movies Section */}
       <div className='mb-10'>
-        <h2 className='text-md font-semibold mb-2'>Movies</h2>
+        <h2 className='text-md font-semibold mb-2 animate-text-reveal' style={{ animationDelay: '0.15s' }}>Movies</h2>
         {loading ? (
           <div className="flex items-center justify-center h-40">
             <div className="w-10 h-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
@@ -57,7 +57,7 @@ const MyWatchlist = () => {
         ) : (
           <div className='flex flex-wrap max-sm:justify-center gap-8'>
             {movieWatchlist.length === 0 ? (
-              <p className='text-gray-400'>No movies in your watchlist yet.</p>
+              <p className='text-gray-400 animate-fade-in'>No movies in your watchlist yet.</p>
             ) : (
               movieWatchlist.map((movie, index) => (
                 <MovieCard
@@ -74,7 +74,7 @@ const MyWatchlist = () => {
 
       {/* Webseries Section */}
       <div>
-        <h2 className='text-md font-semibold mb-2'>Webseries</h2>
+        <h2 className='text-md font-semibold mb-2 animate-text-reveal' style={{ animationDelay: '0.25s' }}>Webseries</h2>
         {loading ? (
           <div className="flex items-center justify-center h-40">
             <div className="w-10 h-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
@@ -82,7 +82,7 @@ const MyWatchlist = () => {
         ) : (
           <div className='flex flex-wrap max-sm:justify-center gap-8'>
             {webseriesWatchlist.length === 0 ? (
-              <p className='text-gray-400'>No webseries in your watchlist yet.</p>
+              <p className='text-gray-400 animate-fade-in'>No webseries in your watchlist yet.</p>
             ) : (
               webseriesWatchlist.map((webseries, index) => (
                 <WebseriesCard

@@ -24,26 +24,82 @@ body{
   }
 }
 
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @keyframes subtlePulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.25); }
+}
+
+@keyframes textReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
 }
 
 .animate-fade-in-up {
   animation: fadeInUp 0.5s ease-out both;
 }
 
+.animate-slide-in-left {
+  animation: slideInLeft 0.7s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.7s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out both;
+}
+
+.animate-text-reveal {
+  animation: textReveal 0.6s ease-out both;
+}
+
 .animate-bookmark-pulse {
   animation: subtlePulse 0.35s ease-in-out;
 }
 
-/* Card hover — original downward movement + subtle glow */
+/* Card hover — upward lift + subtle glow */
 .card-hover-glow {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .card-hover-glow:hover {
-  transform: translateY(4px);
-  box-shadow: 0 4px 20px rgba(55, 198, 203, 0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(55, 198, 203, 0.12);
 }
 
 /* Navbar logo glow on hover */
@@ -77,4 +133,14 @@ body{
 .nav-link-hover:hover::after {
   width: 100%;
   left: 0;
+}
+
+/* Footer link hover */
+.footer-link-hover {
+  transition: color 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+}
+.footer-link-hover:hover {
+  color: #37C6CB;
+  transform: translateX(4px);
 }

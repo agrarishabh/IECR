@@ -54,13 +54,13 @@ const FeaturedSection = () => {
       {/* Top Movies */}
       <div className='relative flex items-center justify-between pt-20 pb-10'>
         <BlurCircle top='0' right='-80px' />
-        <p className='text-gray-300 font-medium text-lg'>Most Rated Indian Movies</p>
+        <p className='text-gray-300 font-medium text-lg animate-slide-in-left'>Most Rated Indian Movies</p>
         <button
           onClick={() => {
             navigate('/movies');
             scrollTo(0, 0);
           }}
-          className='group flex items-center gap-2 text-sm text-gray-300 cursor-pointer'
+          className='group flex items-center gap-2 text-sm text-gray-300 cursor-pointer animate-slide-in-right'
         >
           View All
           <ArrowRight className='group-hover:translate-x-0.5 transition w-4.5 h-4.5' />
@@ -72,8 +72,8 @@ const FeaturedSection = () => {
             <div className="w-10 h-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : topMovies.length > 0 ? (
-          topMovies.map((movie) => (
-            <MovieCard key={movie._id || movie.id} movie={movie} />
+          topMovies.map((movie, index) => (
+            <MovieCard key={movie._id || movie.id} movie={movie} style={{ animationDelay: `${index * 0.1}s` }} />
           ))
         ) : (
           <p className='text-gray-500'>No top rated movies available</p>
@@ -83,13 +83,14 @@ const FeaturedSection = () => {
       {/* Top Webseries */}
       <div className='relative flex items-center justify-between pt-20 pb-10'>
         <BlurCircle top='0' left='-160px' />
-        <p className='text-gray-300 font-medium text-lg'>Most Rated Indian Webseries</p>
+        <p className='text-gray-300 font-medium text-lg animate-slide-in-left' style={{ animationDelay: '0.2s' }}>Most Rated Indian Webseries</p>
         <button
           onClick={() => {
             navigate('/webseries');
             scrollTo(0, 0);
           }}
-          className='group flex items-center gap-2 text-sm text-gray-300 cursor-pointer'
+          className='group flex items-center gap-2 text-sm text-gray-300 cursor-pointer animate-slide-in-right'
+          style={{ animationDelay: '0.2s' }}
         >
           View All
           <ArrowRight className='group-hover:translate-x-0.5 transition w-4.5 h-4.5' />
@@ -101,8 +102,8 @@ const FeaturedSection = () => {
             <div className="w-10 h-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : topWebseries.length > 0 ? (
-          topWebseries.map((series) => (
-            <WebseriesCard key={series._id || series.id} webseries={series} />
+          topWebseries.map((series, index) => (
+            <WebseriesCard key={series._id || series.id} webseries={series} style={{ animationDelay: `${index * 0.1}s` }} />
           ))
         ) : (
           <p className='text-gray-500'>No top rated webseries available</p>
