@@ -63,11 +63,17 @@ router.get('/:userId', async (req, res) => {
 
     const movies = list
       .filter(entry => entry.movieId)
-      .map(entry => entry.movieId);
+      .map(entry => ({
+        ...(entry.movieId.toObject ? entry.movieId.toObject() : entry.movieId),
+        userRating: entry.userRating || null,
+      }));
 
     const webseries = list
       .filter(entry => entry.webseriesId)
-      .map(entry => entry.webseriesId);
+      .map(entry => ({
+        ...(entry.webseriesId.toObject ? entry.webseriesId.toObject() : entry.webseriesId),
+        userRating: entry.userRating || null,
+      }));
 
     res.status(200).json({ movies, webseries });
 
@@ -94,6 +100,42 @@ router.delete('/remove', async (req, res) => {
     res.status(400).json({ message: "Missing movieId or webseriesId in request body." });
 
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Rate a watchlist item
+router.post('/rate', async (req, res) => {
+  const { userId, movieId, webseriesId, rating } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'userId is required' });
+  }
+  if (!rating || rating < 1 || rating > 10) {
+    return res.status(400).json({ error: 'Rating must be between 1 and 10' });
+  }
+  if (!movieId && !webseriesId) {
+    return res.status(400).json({ error: 'Provide either movieId or webseriesId' });
+  }
+
+  try {
+    const query = { userId };
+    if (movieId) query.movieId = movieId;
+    if (webseriesId) query.webseriesId = webseriesId;
+
+    const item = await Watchlist.findOneAndUpdate(
+      query,
+      { userRating: rating },
+      { new: true }
+    );
+
+    if (!item) {
+      return res.status(404).json({ error: 'Watchlist item not found' });
+    }
+
+    res.status(200).json({ message: 'Rating updated successfully', item });
+  } catch (err) {
+    console.error('Rating error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

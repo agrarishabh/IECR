@@ -5,6 +5,7 @@ import BlurCircle from './BlurCircle';
 import MovieCard from './MovieCard';
 import WebseriesCard from './WebseriesCard';
 import axios from 'axios';
+import SkeletonCard from './SkeletonCard';
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -68,9 +69,7 @@ const FeaturedSection = () => {
       </div>
       <div className='flex flex-wrap max-sm:justify-center gap-8 mt-8'>
         {loadingMovies ? (
-          <div className="flex justify-center items-center w-full h-40">
-            <div className="w-10 h-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+          [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
         ) : topMovies.length > 0 ? (
           topMovies.map((movie, index) => (
             <MovieCard key={movie._id || movie.id} movie={movie} style={{ animationDelay: `${index * 0.1}s` }} />
@@ -98,9 +97,7 @@ const FeaturedSection = () => {
       </div>
       <div className='flex flex-wrap max-sm:justify-center gap-8 mt-8'>
         {loadingWebseries ? (
-          <div className="flex justify-center items-center w-full h-40">
-            <div className="w-10 h-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+          [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
         ) : topWebseries.length > 0 ? (
           topWebseries.map((series, index) => (
             <WebseriesCard key={series._id || series.id} webseries={series} style={{ animationDelay: `${index * 0.1}s` }} />

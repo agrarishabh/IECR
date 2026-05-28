@@ -13,6 +13,12 @@ const watchlistSchema = new mongoose.Schema({
   webseriesId: {
     type: String, // Same type as Webseries._id
     ref: 'Webseries',
+  },
+  userRating: {
+    type: Number,
+    min: 1,
+    max: 10,
+    default: null,
   }
 }, { timestamps: true });
 

@@ -36,13 +36,27 @@ app.use(cors({
 app.use(express.json());
 app.use(clerkMiddleware())
 
+// Admin verification middleware
+const ADMIN_USER_IDS = (process.env.ADMIN_USER_IDS || '').split(',').map(id => id.trim()).filter(Boolean);
+
+const requireAdmin = (req, res, next) => {
+  if (!req.auth?.userId || !ADMIN_USER_IDS.includes(req.auth.userId)) {
+    return res.status(403).json({ error: 'Forbidden: Admin access required' });
+  }
+  next();
+};
+
 
 //API Routes
 
 app.use('/api/watchlist', watchlistRoutes);
 app.get('/', (req,res)=>res.send('Server is Live'))
 app.use('/api/inngest', serve({ client: inngest, functions }));
-app.post("/addmovies",async (req, res) =>{
+app.post("/addmovies", requireAuth(), requireAdmin, async (req, res) =>{
+  const { _id, id, title, backdrop_path, release_year, runtime, rating, votes } = req.body;
+  if (!_id || !id || !title || !backdrop_path || !release_year || !runtime || !rating || !votes) {
+    return res.status(400).json({ error: 'All fields are required: _id, id, title, backdrop_path, release_year, runtime, rating, votes' });
+  }
   try{
   const newMovie = new Movie(req.body);
   await newMovie.save();
@@ -59,7 +73,11 @@ app.get('/addmovies', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-app.post("/addwebseries",async (req, res) =>{
+app.post("/addwebseries", requireAuth(), requireAdmin, async (req, res) =>{
+  const { _id, id, title, backdrop_path, release_year, seasons, rating, votes } = req.body;
+  if (!_id || !id || !title || !backdrop_path || !release_year || !seasons || !rating || !votes) {
+    return res.status(400).json({ error: 'All fields are required: _id, id, title, backdrop_path, release_year, seasons, rating, votes' });
+  }
   try{
   const newWebseries = new Webseries(req.body);
   await newWebseries.save();
@@ -77,7 +95,7 @@ app.get('/addwebseries', async (req, res) => {
   }
 });
 // For updating movie
-app.put('/movie/:id', async (req, res) => {
+app.put('/movie/:id', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { backdrop_path, rating, votes } = req.body;
     const updated = await Movie.findByIdAndUpdate(
@@ -93,7 +111,7 @@ app.put('/movie/:id', async (req, res) => {
 });
 
 // For updating webseries
-app.put('/webseries/:id', async (req, res) => {
+app.put('/webseries/:id', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { backdrop_path, seasons, rating, votes } = req.body;
     const updated = await Webseries.findByIdAndUpdate(
@@ -109,7 +127,7 @@ app.put('/webseries/:id', async (req, res) => {
 });
 
 // For deleting movie
-app.delete('/movie/:id', async (req, res) => {
+app.delete('/movie/:id', requireAuth(), requireAdmin, async (req, res) => {
   try {
     await Movie.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Movie deleted successfully" });
@@ -119,7 +137,7 @@ app.delete('/movie/:id', async (req, res) => {
 });
 
 // For deleting webseries
-app.delete('/webseries/:id', async (req, res) => {
+app.delete('/webseries/:id', requireAuth(), requireAdmin, async (req, res) => {
   try {
     await Webseries.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Webseries deleted successfully" });
