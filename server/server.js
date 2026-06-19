@@ -1,152 +1,107 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
+import http from 'http';
+import helmet from 'helmet';
 import connectDB from './configs/db.js';
-import { clerkMiddleware } from '@clerk/express';
-import { serve } from "inngest/express";
-import { inngest, functions } from "./inngest/index.js";
-import Movie from './models/Movie.js';
-import Webseries from './models/Webseries.js';
+import { serve } from 'inngest/express';
+import { inngest, functions } from './inngest/index.js';
 import Watchlist from './models/Watchlist.js';
-import { requireAuth } from "@clerk/express";
+import validateEnv from './middleware/validateEnv.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { apiLimiter } from './middleware/rateLimiter.js';
+import movieRoutes from './routes/movies.js';
+import webseriesRoutes from './routes/webseries.js';
 import watchlistRoutes from './routes/watchlist.js';
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://iecr.vercel.app'
-];
+import ratingsRoutes from './routes/ratings.js';
+import tmdbRoutes from './routes/tmdb.js';
+import adminRoutes from './routes/admin.js';
+import friendsRoutes from './routes/friends.js';
+import messagesRoutes from './routes/messages.js';
+import commentsRoutes from './routes/comments.js';
+import notificationsRoutes from './routes/notifications.js';
+import usersRoutes from './routes/users.js';
+import { initSocket } from './socket.js';
+import { logger } from './lib/logger.js';
+
+// Validate required env vars before anything else
+validateEnv();
 
 const app = express();
+const server = http.createServer(app);
 const port = process.env.PORT || 3000;
-await connectDB()
 
-// Sync indexes to drop old stale indexes and recreate with correct filters
-await Watchlist.syncIndexes();
-console.log("Watchlist indexes synced successfully");
-// Middleware
+// Initialize Socket.io
+initSocket(server);
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://iecr.vercel.app',
+];
+
+// ── Core middleware ──────────────────────────────────────────────────────────
+app.use(helmet());
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
 }));
 app.use(express.json());
-app.use(clerkMiddleware())
 
-// Admin verification middleware
-const ADMIN_USER_IDS = (process.env.ADMIN_USER_IDS || '').split(',').map(id => id.trim()).filter(Boolean);
+// ── Rate limiting ────────────────────────────────────────────────────────────
+app.use('/api/', apiLimiter);
 
-const requireAdmin = (req, res, next) => {
-  if (!req.auth?.userId || !ADMIN_USER_IDS.includes(req.auth.userId)) {
-    return res.status(403).json({ error: 'Forbidden: Admin access required' });
-  }
-  next();
-};
+// ── Database ─────────────────────────────────────────────────────────────────
+await connectDB();
+await Watchlist.syncIndexes();
+logger.info('[DB] Watchlist indexes synced successfully');
 
+// ── Health check ─────────────────────────────────────────────────────────────
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
 
-//API Routes
+// ── Auth debug (remove after fixing) ─────────────────────────────────────────
+app.get('/api/auth-test', (req, res) => {
+  const authHeader = req.headers.authorization;
+  const userId = req.auth?.userId;
+  res.json({
+    hasAuthHeader: !!authHeader,
+    headerPrefix: authHeader?.substring(0, 15),
+    userId: userId || null,
+    authStatus: req.auth?.status || null,
+    authReason: req.auth?.reason || null,
+  });
+});
 
-app.use('/api/watchlist', watchlistRoutes);
-app.get('/', (req,res)=>res.send('Server is Live'))
+// ── Routes ───────────────────────────────────────────────────────────────────
+app.get('/', (req, res) => res.send('Server is Live'));
 app.use('/api/inngest', serve({ client: inngest, functions }));
-app.post("/addmovies", requireAuth(), requireAdmin, async (req, res) =>{
-  const { _id, id, title, backdrop_path, release_year, runtime, rating, votes } = req.body;
-  if (!_id || !id || !title || !backdrop_path || !release_year || !runtime || !rating || !votes) {
-    return res.status(400).json({ error: 'All fields are required: _id, id, title, backdrop_path, release_year, runtime, rating, votes' });
-  }
-  try{
-  const newMovie = new Movie(req.body);
-  await newMovie.save();
-  res.status(201).json(newMovie);
-} catch(err){
-  res.status(500).json({error: err.message});
-}
-});
-app.get('/addmovies', async (req, res) => {
-  try {
-    const movies = await Movie.find();
-    res.status(200).json(movies);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-app.post("/addwebseries", requireAuth(), requireAdmin, async (req, res) =>{
-  const { _id, id, title, backdrop_path, release_year, seasons, rating, votes } = req.body;
-  if (!_id || !id || !title || !backdrop_path || !release_year || !seasons || !rating || !votes) {
-    return res.status(400).json({ error: 'All fields are required: _id, id, title, backdrop_path, release_year, seasons, rating, votes' });
-  }
-  try{
-  const newWebseries = new Webseries(req.body);
-  await newWebseries.save();
-  res.status(201).json(newWebseries);
-} catch(err){
-  res.status(500).json({error: err.message});
-}
-});
-app.get('/addwebseries', async (req, res) => {
-  try {
-    const webseries = await Webseries.find();
-    res.status(200).json(webseries);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-// For updating movie
-app.put('/movie/:id', requireAuth(), requireAdmin, async (req, res) => {
-  try {
-    const { backdrop_path, rating, votes } = req.body;
-    const updated = await Movie.findByIdAndUpdate(
-      req.params.id,
-      { backdrop_path, rating, votes },
-      { new: true }
-    );
-    if (!updated) return res.status(404).json({ error: "Movie not found" });
-    res.status(200).json({ message: "Movie updated successfully", movie: updated });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+app.use('/api/movies', movieRoutes);
+app.use('/api/webseries', webseriesRoutes);
+app.use('/api/watchlist', watchlistRoutes);
+app.use('/api/ratings', ratingsRoutes);
+app.use('/api/tmdb', tmdbRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/friends', friendsRoutes);
+app.use('/api/messages', messagesRoutes);
+app.use('/api/comments', commentsRoutes);
+app.use('/api/notifications', notificationsRoutes);
+app.use('/api/users', usersRoutes);
 
-// For updating webseries
-app.put('/webseries/:id', requireAuth(), requireAdmin, async (req, res) => {
-  try {
-    const { backdrop_path, seasons, rating, votes } = req.body;
-    const updated = await Webseries.findByIdAndUpdate(
-      req.params.id,
-      { backdrop_path, seasons, rating, votes },
-      { new: true }
-    );
-    if (!updated) return res.status(404).json({ error: "Webseries not found" });
-    res.status(200).json({ message: "Webseries updated successfully", webseries: updated });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// ── Global error handler (must be last) ──────────────────────────────────────
+app.use(errorHandler);
 
-// For deleting movie
-app.delete('/movie/:id', requireAuth(), requireAdmin, async (req, res) => {
-  try {
-    await Movie.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Movie deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// For deleting webseries
-app.delete('/webseries/:id', requireAuth(), requireAdmin, async (req, res) => {
-  try {
-    await Webseries.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Webseries deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+// ── Start server ─────────────────────────────────────────────────────────────
+server.listen(port, () => {
+  logger.info(`[SERVER] Running on http://localhost:${port}`);
 });

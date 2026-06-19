@@ -12,28 +12,18 @@ const AdminPage = () => {
     <>
       <AdminNavbar />
       <BlurCircle top='0' right='-80px' />
-      
+
       {/* Row 1: Add & Delete Forms */}
       <div className="flex flex-col lg:flex-row gap-8 justify-center items-start px-6 py-10">
-        <div className="flex-1">
-          <AddMovies />
-        </div>
-        <div className="flex-1">
-          <AddWebseries />
-        </div>
-        <div className="flex-1">
-          <DeleteForm />
-        </div>
+        <div className="flex-1"><AddMovies /></div>
+        <div className="flex-1"><AddWebseries /></div>
+        <div className="flex-1"><DeleteForm /></div>
       </div>
 
       {/* Row 2: Update Forms */}
       <div className="flex flex-col lg:flex-row gap-8 justify-center items-start px-6 pb-10">
-        <div className="flex-1">
-          <UpdateMovie />
-        </div>
-        <div className="flex-1">
-          <UpdateWebseries />
-        </div>
+        <div className="flex-1"><UpdateMovie /></div>
+        <div className="flex-1"><UpdateWebseries /></div>
       </div>
 
       <BlurCircle bottom='0' left='-80px' />

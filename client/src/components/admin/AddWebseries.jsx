@@ -1,42 +1,30 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useAuth } from "@clerk/clerk-react";
 
-const baseUrl = import.meta.env.VITE_BASE_URL
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 const AddWebseries = () => {
+  const { getToken } = useAuth();
   const [formData, setFormData] = useState({
-    _id: "",
-    id: "",
-    title: "",
-    backdrop_path: "",
-    release_year: "",
-    seasons: "",
-    rating: "",
-    votes: "",
+    _id: "", id: "", title: "", backdrop_path: "",
+    release_year: "", seasons: "", rating: "", votes: "",
   });
 
-  const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${baseUrl}/addwebseries`, formData);
-      toast.success("Webseries Added Successfully!");
-      setFormData({
-        _id: "",
-        id: "",
-        title: "",
-        backdrop_path: "",
-        release_year: "",
-        seasons: "",
-        rating: "",
-        votes: "",
+      const token = await getToken();
+      await axios.post(`${baseUrl}/api/webseries`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      toast.success("Webseries Added Successfully!");
+      setFormData({ _id: "", id: "", title: "", backdrop_path: "", release_year: "", seasons: "", rating: "", votes: "" });
     } catch (err) {
-      console.error("Error adding webseries:", err);
-      toast.error("Failed to add webseries");
+      toast.error(err.response?.data?.error || "Failed to add webseries");
     }
   };
 
@@ -52,25 +40,18 @@ const AddWebseries = () => {
           { label: "Release Year", name: "release_year", type: "number" },
           { label: "Seasons", name: "seasons", type: "number" },
           { label: "Rating", name: "rating", type: "text" },
-          { label: "Votes", name: "votes", type: "text" }
+          { label: "Votes", name: "votes", type: "text" },
         ].map(({ label, name, type }) => (
           <div key={name}>
             <label className="block mb-1">{label}</label>
             <input
-              type={type}
-              name={name}
-              value={formData[name]}
-              onChange={handleChange}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600"
+              type={type} name={name} value={formData[name]} onChange={handleChange}
+              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-cyan-400 focus:outline-none"
               required
             />
           </div>
         ))}
-
-        <button
-          type="submit"
-          className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 rounded"
-        >
+        <button type="submit" className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 rounded transition-colors cursor-pointer">
           Add Webseries
         </button>
       </form>

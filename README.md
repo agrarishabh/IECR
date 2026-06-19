@@ -1,58 +1,79 @@
-# 🍿 IECR — Indian Entertainment Content Recommendation
+# IECR - Indian Entertainment Content Rating
 
-**IECR (Indian Entertainment Content Recommendation)** is a full-stack web application that helps users discover high-quality Indian movies and web series. It recommends content based on IMDb ratings (7+ and 20K+ votes), allows users to maintain a watchlist, and provides an admin panel for content management.
+![IECR Logo](./client/src/assets/logo.png)
 
-🔗 **Live Demo:** [https://iecr.vercel.app](https://iecr.vercel.app)  
-📦 **GitHub Repo:** [https://github.com/agrarishabh/IECR](https://github.com/agrarishabh/IECR)
+A comprehensive web application for discovering, tracking, and rating Indian movies and web series.
 
----
+## Features
+- **Authentication**: Secure login and signup via Clerk.
+- **Movies & Webseries**: Browse extensive catalogs of Indian entertainment.
+- **Watchlist**: Track what you want to watch.
+- **Ratings & Reviews**: Rate content and read community comments.
+- **Social Hub**: Add friends, send messages, and view what your friends are watching and rating in real-time.
+- **Real-Time Notifications**: Get instant alerts for friend requests and messages via Socket.io.
+- **Admin Panel**: Manage content directly from the UI (restricted to admins).
 
-## 📅 Timeline
+## Architecture & Tech Stack
 
-🗓 **Project Started:** June 2025
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, Vite, TailwindCSS v4, React Router |
+| State Management | TanStack Query, Zustand, React Context |
+| Animations & UI | Framer Motion, Lucide React |
+| Backend | Node.js, Express 5, Socket.io |
+| Database | MongoDB Atlas + Mongoose |
+| Authentication | Clerk (Custom JWT decoding) |
+| Background Jobs | Inngest |
 
----
-
-## ✨ Features
-
-- 🎥 **Content Discovery:** Browse top-rated Indian movies and web series (IMDb rating ≥7 & 20K+ votes)
-- 📋 **Watchlist:** Add or remove content to/from your personal watchlist
-- ⭐ **User Ratings:** Rate content directly in the platform
-- 👤 **Clerk Authentication:** Sign up/sign in securely using Clerk
-- 🛠 **Admin Panel:** Add upcoming movies/web series and delete incorrect entries (admin-only)
-- 🔃 **Sorting:** Sort content by year, IMDb rating, or vote count
-- 🌐 **Responsive UI:** Works seamlessly on all devices
-- ☁️ **Deployed on Vercel** for fast and reliable access
-
----
-
-## 🖥 Tech Stack
-
-### 💻 Frontend
-- **React.js** — Component-based UI
-- **Tailwind CSS** — Modern utility-first CSS framework
-- **Clerk** — Authentication and user management
-- **Lucide Icons** — Elegant and lightweight icon system
-
-### 🔧 Backend
-- **Node.js** — JavaScript runtime
-- **Express.js** — RESTful API framework
-- **MongoDB Atlas** — Cloud database for user data and content
-- **Mongoose** — MongoDB object modeling for Node.js
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js installed
-- MongoDB Atlas database
-- Clerk project for authentication (get API keys from Clerk.dev)
-
-### Installation
+## Local Development Setup
 
 1. **Clone the repository**
+2. **Install dependencies**
+   ```bash
+   cd server && npm install
+   cd ../client && npm install
+   ```
+3. **Environment Variables**
+   - Create `server/.env` and `client/.env` files with required variables (see below).
+4. **Run the application**
+   ```bash
+   # Terminal 1: Server
+   cd server
+   npm run server
 
-```bash
-git clone https://github.com/agrarishabh/IECR.git
-cd IECR
+   # Terminal 2: Client
+   cd client
+   npm run dev
+   ```
+
+## Environment Variables
+
+### Server (`server/.env`)
+| Variable | Description |
+|---|---|
+| `PORT` | Server port (default 5000) |
+| `MONGODB_URI` | MongoDB connection string |
+| `CLERK_PUBLISHABLE_KEY` | Clerk Publishable Key |
+| `CLERK_SECRET_KEY` | Clerk Secret Key |
+| `CLIENT_URL` | Frontend URL for CORS |
+| `ADMIN_USER_IDS` | Comma-separated list of Clerk User IDs with admin access |
+| `TMDB_API_KEY` | Optional: TMDB API Key for fetching details |
+
+### Client (`client/.env`)
+| Variable | Description |
+|---|---|
+| `VITE_BASE_URL` | Backend URL (e.g. `http://localhost:5000`) |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk Publishable Key |
+
+## Deployment Guide
+
+### Client (Vercel)
+1. Import `client` directory to Vercel.
+2. Build command: `npm run build`
+3. Add `VITE_CLERK_PUBLISHABLE_KEY` and `VITE_BASE_URL` to Vercel environment variables.
+
+### Server (Render)
+1. Import `server` directory to Render as a Web Service.
+2. Build command: `npm install`
+3. Start command: `node server.js`
+4. Add all server environment variables.

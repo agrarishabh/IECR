@@ -16,13 +16,12 @@ const syncUserCreation = inngest.createFunction(
         await User.create(userData)
     }
 )
-const syncUserDletion = inngest.createFunction(
+const syncUserDeletion = inngest.createFunction(
     {id: 'delete-user-with-clerk'},
     { event: "clerk/user.deleted" },
     async({event})=>{
         const {id} = event.data;
         await User.findByIdAndDelete(id);
-        
     }
 )
 const syncUserUpdation = inngest.createFunction(
@@ -39,4 +38,4 @@ const syncUserUpdation = inngest.createFunction(
         await User.findByIdAndUpdate(id, userData);
     }
 )
-export const functions = [syncUserCreation, syncUserDletion, syncUserUpdation];
+export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation];

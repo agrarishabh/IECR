@@ -1,43 +1,21 @@
 import mongoose from 'mongoose';
 
 const watchlistSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
-    ref: 'User',
-  },
-  movieId: {
-    type: String, // Same type as Movie._id
-    ref: 'Movie',
-  },
-  webseriesId: {
-    type: String, // Same type as Webseries._id
-    ref: 'Webseries',
-  },
-  userRating: {
-    type: Number,
-    min: 1,
-    max: 10,
-    default: null,
-  }
+  userId: { type: String, required: true, ref: 'User' },
+  movieId: { type: String, ref: 'Movie' },
+  webseriesId: { type: String, ref: 'Webseries' },
 }, { timestamps: true });
 
-// Unique index for movie entries
+// Unique index — one entry per user per movie
 watchlistSchema.index(
   { userId: 1, movieId: 1 },
-  {
-    unique: true,
-    partialFilterExpression: { movieId: { $type: "string" } },
-  }
+  { unique: true, partialFilterExpression: { movieId: { $type: 'string' } } }
 );
 
-// Unique index for webseries entries
+// Unique index — one entry per user per webseries
 watchlistSchema.index(
   { userId: 1, webseriesId: 1 },
-  {
-    unique: true,
-    partialFilterExpression: { webseriesId: { $type: "string" } },
-  }
+  { unique: true, partialFilterExpression: { webseriesId: { $type: 'string' } } }
 );
 
 const Watchlist = mongoose.model('Watchlist', watchlistSchema);

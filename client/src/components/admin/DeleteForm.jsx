@@ -1,27 +1,34 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-const baseUrl = import.meta.env.VITE_BASE_URL
+import { useAuth } from '@clerk/clerk-react';
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const DeleteForm = () => {
-  const [type, setType] = useState('movie'); // or 'webseries'
+  const { getToken } = useAuth();
+  const [type, setType] = useState('movie');
   const [id, setId] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleDelete = async (e) => {
     e.preventDefault();
+    if (!id) return toast.error("Please enter an ID.");
 
-    if (!id) {
-      toast.error("Please enter an ID.");
-      return;
-    }
-
+    setLoading(true);
     try {
-      const response = await axios.delete(`${baseUrl}/${type}/${id}`);
-      toast.success(`${type.toUpperCase()} deleted successfully`);
+      const token = await getToken();
+      const endpoint = type === 'movie'
+        ? `${baseUrl}/api/movies/${id}`
+        : `${baseUrl}/api/webseries/${id}`;
+
+      await axios.delete(endpoint, { headers: { Authorization: `Bearer ${token}` } });
+      toast.success(`${type === 'movie' ? 'Movie' : 'Webseries'} deleted successfully`);
       setId('');
     } catch (err) {
-      console.error(err);
-      toast.error(`Failed to delete ${type}: ${err.response?.data?.error || err.message}`);
+      toast.error(`Failed to delete: ${err.response?.data?.error || err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,31 +39,26 @@ const DeleteForm = () => {
         <label className="text-white">
           Select Type:
           <select
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            className="w-full mt-1 p-2 rounded bg-gray-700 text-white"
+            value={type} onChange={(e) => setType(e.target.value)}
+            className="w-full mt-1 p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-cyan-400 focus:outline-none"
           >
             <option value="movie">Movie</option>
             <option value="webseries">Webseries</option>
           </select>
         </label>
-
         <label className="text-white">
-          Enter ID:
+          Enter ID (_id):
           <input
-            type="text"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
+            type="text" value={id} onChange={(e) => setId(e.target.value)}
             placeholder="Enter MongoDB _id"
-            className="w-full mt-1 p-2 rounded bg-gray-700 text-white"
+            className="w-full mt-1 p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-cyan-400 focus:outline-none"
           />
         </label>
-
         <button
-          type="submit"
-          className="bg-[#37C6CB] hover:bg-red-700 text-white py-2 px-4 rounded"
+          type="submit" disabled={loading}
+          className="bg-[#37C6CB] hover:bg-red-700 disabled:opacity-50 text-white py-2 px-4 rounded transition-colors cursor-pointer"
         >
-          Delete {type}
+          {loading ? 'Deleting...' : `Delete ${type === 'movie' ? 'Movie' : 'Webseries'}`}
         </button>
       </form>
     </div>

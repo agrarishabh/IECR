@@ -1,49 +1,40 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useAuth } from "@clerk/clerk-react";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const UpdateWebseries = () => {
+  const { getToken } = useAuth();
   const [webseriesId, setWebseriesId] = useState("");
-  const [formData, setFormData] = useState({
-    backdrop_path: "",
-    seasons: "",
-    rating: "",
-    votes: "",
-  });
+  const [formData, setFormData] = useState({ backdrop_path: "", seasons: "", rating: "", votes: "" });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!webseriesId) {
-      toast.error("Please enter a Webseries ID (_id)");
-      return;
-    }
+    if (!webseriesId) return toast.error("Please enter a Webseries ID (_id)");
+
+    const updateData = {};
+    if (formData.backdrop_path) updateData.backdrop_path = formData.backdrop_path;
+    if (formData.seasons) updateData.seasons = Number(formData.seasons);
+    if (formData.rating) updateData.rating = formData.rating;
+    if (formData.votes) updateData.votes = formData.votes;
+
+    if (Object.keys(updateData).length === 0) return toast.error("Please fill at least one field to update");
+
     setLoading(true);
     try {
-      const updateData = {};
-      if (formData.backdrop_path) updateData.backdrop_path = formData.backdrop_path;
-      if (formData.seasons) updateData.seasons = Number(formData.seasons);
-      if (formData.rating) updateData.rating = formData.rating;
-      if (formData.votes) updateData.votes = formData.votes;
-
-      if (Object.keys(updateData).length === 0) {
-        toast.error("Please fill at least one field to update");
-        setLoading(false);
-        return;
-      }
-
-      await axios.put(`${baseUrl}/webseries/${webseriesId}`, updateData);
+      const token = await getToken();
+      await axios.put(`${baseUrl}/api/webseries/${webseriesId}`, updateData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       toast.success("Webseries Updated Successfully!");
       setWebseriesId("");
       setFormData({ backdrop_path: "", seasons: "", rating: "", votes: "" });
     } catch (err) {
-      console.error("Error updating webseries:", err);
       toast.error(err.response?.data?.error || "Failed to update webseries");
     } finally {
       setLoading(false);
@@ -57,15 +48,12 @@ const UpdateWebseries = () => {
         <div>
           <label className="block mb-1">Webseries ID (_id)</label>
           <input
-            type="text"
-            value={webseriesId}
-            onChange={(e) => setWebseriesId(e.target.value)}
+            type="text" value={webseriesId} onChange={(e) => setWebseriesId(e.target.value)}
             placeholder="Enter webseries _id to update"
-            className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600"
+            className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-cyan-400 focus:outline-none"
             required
           />
         </div>
-
         {[
           { label: "Poster URL", name: "backdrop_path", type: "text" },
           { label: "Seasons", name: "seasons", type: "number" },
@@ -75,19 +63,14 @@ const UpdateWebseries = () => {
           <div key={name}>
             <label className="block mb-1">{label}</label>
             <input
-              type={type}
-              name={name}
-              value={formData[name]}
-              onChange={handleChange}
+              type={type} name={name} value={formData[name]} onChange={handleChange}
               placeholder={`Enter new ${label.toLowerCase()}`}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600"
+              className="w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-cyan-400 focus:outline-none"
             />
           </div>
         ))}
-
         <button
-          type="submit"
-          disabled={loading}
+          type="submit" disabled={loading}
           className="bg-cyan-500 hover:bg-cyan-600 disabled:opacity-50 text-white font-semibold py-2 rounded transition-colors cursor-pointer"
         >
           {loading ? "Updating..." : "Update Webseries"}
