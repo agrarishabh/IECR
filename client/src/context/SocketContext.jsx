@@ -21,7 +21,7 @@ export const SocketProvider = ({ children }) => {
       if (isSignedIn && isLoaded) {
         try {
           const token = await getToken();
-          newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
+          newSocket = io(import.meta.env.VITE_BASE_URL || 'http://localhost:3000', {
             auth: { token },
             withCredentials: true
           });
